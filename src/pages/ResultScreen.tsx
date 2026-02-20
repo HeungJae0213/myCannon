@@ -198,7 +198,12 @@ function ResultScreen() {
             setAdRetryCount(0);
             setShowToast(true);
             toastTimeout.current = setTimeout(() => setShowToast(false), 2600);
-            setTimeout(() => setFireCount(fireCount + 1), 800); // fallback 1회 지급
+            setTimeout(() => {
+              setFireCount(fireCount + 1);
+              setResultVisible(false);
+              setFiring(false);
+              setShowNumber(false);
+            }, 800); // fallback 1회 지급 및 상태 초기화
           }
         });
       }
@@ -342,6 +347,9 @@ function ResultScreen() {
                 onClick={() => {
                   setFireCount(fireCount + 1);
                   setShowAdModal(false);
+                  setResultVisible(false);
+                  setFiring(false);
+                  setShowNumber(false);
                 }}
                 disabled={adLoading}
               >

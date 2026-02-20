@@ -116,3 +116,123 @@
 .charge-badge-btn:active {
   background: #159e62;
 }
+
+.ad-modal-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.25);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ad-modal {
+  background: #222;
+  border-radius: 18px;
+  padding: 32px 20px 24px 20px;
+  box-shadow: 0 4px 32px #0007;
+  max-width: 90vw;
+  width: 340px;
+  color: #fff;
+  text-align: center;
+  z-index: 101;
+}
+
+.toss-ad-modal {
+  background: #fff;
+  border-radius: 24px;
+  padding: 36px 20px 28px 20px;
+  box-shadow: 0 4px 32px #0007;
+  max-width: 90vw;
+  width: 340px;
+  color: #222;
+  text-align: center;
+  z-index: 101;
+  position: relative;
+}
+
+.ad-modal-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #bbb;
+  cursor: pointer;
+  z-index: 102;
+  padding: 0;
+  line-height: 1;
+}
+
+.ad-modal-icon {
+  font-size: 3.2rem;
+  margin-bottom: 12px;
+}
+
+.ad-modal-title {
+  font-size: 1.35rem;
+  font-weight: 900;
+  margin-bottom: 10px;
+  color: #222;
+}
+
+.ad-modal-desc {
+  font-size: 1.08rem;
+  color: #222;
+  margin-bottom: 8px;
+}
+
+.ad-modal-highlight {
+  color: #267dff;
+  font-weight: 900;
+}
+
+.ad-modal-desc-sub {
+  color: #aaa;
+  font-size: 0.98rem;
+  display: block;
+  margin-top: 4px;
+}
+
+.ad-modal-btn-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  justify-content: center;
+}
+
+.ad-modal-btn {
+  flex: 1 1 0;
+  font-size: 1.08rem;
+  font-weight: 700;
+  border-radius: 12px;
+  padding: 14px 0;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.ad-modal-btn-gray {
+  background: #f2f3f6;
+  color: #888;
+}
+
+.ad-modal-btn-blue {
+  background: #267dff;
+  color: #fff;
+}
+
+.ad-modal-btn-blue:active {
+  background: #155ecb;
+}
+
+.ad-modal-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

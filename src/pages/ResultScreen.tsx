@@ -19,6 +19,7 @@ function ResultScreen() {
   const { mode, singleCount, rangeMin, rangeMax, allowDuplicate } = location.state || {};
   const [fireCount, setFireCount] = useState(0);
   const [showAdModal, setShowAdModal] = useState(false);
+  const [adLoading, setAdLoading] = useState(false);
   const [showCannonBall, setShowCannonBall] = useState(false);
   const [firedNumber, setFiredNumber] = useState<number | null>(null);
 
@@ -69,11 +70,54 @@ function ResultScreen() {
       {/* 광고 모달 */}
       {showAdModal && (
         <div className="ad-modal-bg">
-          <div className="ad-modal">
-            <h3>앱인토스 인앱광고 2.0</h3>
-            <p>광고를 스킵하면 1회, 시청하면 5회 발사권을 드립니다.</p>
-            <button className="fire-btn" onClick={() => { setFireCount(fireCount + 1); setShowAdModal(false); }}>스킵하기</button>
-            <button className="fire-btn" onClick={() => { setFireCount(fireCount + 5); setShowAdModal(false); }}>광고 시청</button>
+          <div className="ad-modal toss-ad-modal">
+            <button className="ad-modal-close" onClick={() => setShowAdModal(false)} aria-label="닫기">×</button>
+            <div className="ad-modal-icon" aria-hidden="true">🎁</div>
+            <div className="ad-modal-title">발사 횟수가 부족해요!</div>
+            <div className="ad-modal-desc">
+              광고를 끝까지 시청하면 <span className="ad-modal-highlight">5번의 횟수</span>를 드려요<br />
+              <span className="ad-modal-desc-sub">(광고를 보지 않으면 1회만 지급됩니다)</span>
+            </div>
+            <div className="ad-modal-btn-row">
+              <button
+                className="ad-modal-btn ad-modal-btn-gray"
+                onClick={() => {
+                  setFireCount(fireCount + 1);
+                  setShowAdModal(false);
+                }}
+              >
+                1회 받기
+              </button>
+              <button
+                className="ad-modal-btn ad-modal-btn-blue"
+                onClick={async () => {
+                  setAdLoading(true);
+                  // 광고 시청 로직 (실제 환경에서는 광고 SDK 콜백 필요)
+                  if (window.showAppsInTossAdMob && interstitialAdId) {
+                    window.showAppsInTossAdMob({
+                      adUnitId: interstitialAdId,
+                      adType: 'interstitial',
+                      testMode: true,
+                      onClose: (result: { completed: boolean }) => {
+                        if (result.completed) setFireCount(fireCount + 5);
+                        setShowAdModal(false);
+                        setAdLoading(false);
+                      }
+                    });
+                  } else {
+                    // fallback: 즉시 지급
+                    setTimeout(() => {
+                      setFireCount(fireCount + 5);
+                      setShowAdModal(false);
+                      setAdLoading(false);
+                    }, 1200);
+                  }
+                }}
+                disabled={adLoading}
+              >
+                광고 보기
+              </button>
+            </div>
           </div>
         </div>
       )}

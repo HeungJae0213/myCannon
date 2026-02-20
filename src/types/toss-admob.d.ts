@@ -3,6 +3,7 @@ interface LoadAppsInTossAdMobOptions {
   adUnitId: string;
   adType: 'interstitial' | 'rewarded';
   testMode?: boolean;
+  onClose?: (result: { completed: boolean }) => void;
 }
 
 declare global {

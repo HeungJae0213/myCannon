@@ -1,3 +1,6 @@
+html, body, .mode-select-screen {
+  overflow: hidden;
+}
 
 body, #root {
   width: 100vw;

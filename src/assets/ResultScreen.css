@@ -1,3 +1,65 @@
+/* 저장하기 버튼 (파란색, 결과 아래) */
+.save-result-btn-row {
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+  margin-bottom: 15px;
+  position: relative;
+  z-index: 20;
+}
+.save-result-btn-blue {
+  background: #3182f6;
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 16px;
+  padding: 14px 44px;
+  box-shadow: 0 2px 12px #0002;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin: 0 auto;
+  display: block;
+}
+.save-result-btn-blue:active {
+  background: #2366c7;
+}
+/* 발사 애니메이션용 빨간공 */
+.firing-red-ball-anim {
+  position: fixed;
+  left: 50%;
+  bottom: 250px;
+  width: 300px;
+  height: 300px;
+  transform: translateX(-50%);
+  z-index: 10;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  overflow: visible;
+}
+
+.fired-number-reveal {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 7.5rem;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 2px 16px #a80000, 0 0 0 #fff;
+  z-index: 20;
+  animation: fired-number-pop 0.5s cubic-bezier(.4,1.6,.6,1);
+}
+
+@keyframes fired-number-pop {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.7); }
+  60% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
 /* 발사 버튼 뒤에 반만 보이는 빨간 대포알 (충전) */
 .charged-red-ball-container {
   position: fixed;
@@ -56,7 +118,7 @@
 .cannon-ball-on-cannon {
   position: fixed;
   left: 50%;
-  bottom: 70px;
+  bottom: 80px;
   transform: translateX(-50%);
   width: 96px;
   height: 96px;
@@ -236,7 +298,11 @@
 .ad-modal-btn-row {
   display: flex;
   gap: 12px;
-  margin-top: 24px;
+  margin-top: 36px;
+  position: relative;
+  left: 0;
+  bottom: 0;
+  width: 100%;
   justify-content: center;
 }
 

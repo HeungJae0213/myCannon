@@ -1,4 +1,3 @@
-
 import CannonBody from '../components/CannonBody';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -16,6 +15,9 @@ function ModeSelectScreen() {
   const rangeMinError = rangeMinTouched && !rangeMin ? '공 최소값을 입력해 주세요' : '';
   const rangeMaxError = rangeMaxTouched && !rangeMax ? '공 최대값을 입력해 주세요' : '';
   const isStartDisabled = !rangeMin || !rangeMax;
+  const minNum = parseInt(rangeMin, 10);
+  const maxNum = parseInt(rangeMax, 10);
+  const invalidRange = rangeMin && rangeMax && minNum > maxNum;
 
   return (
     <div className="mode-select-screen">
@@ -57,6 +59,9 @@ function ModeSelectScreen() {
           {rangeMaxError && (
             <div className="mode-select-error-text">{rangeMaxError}</div>
           )}
+          {invalidRange && (
+            <div className="mode-select-badge-bad">최소값이 최대값보다 클 순 없어요</div>
+          )}
           <label className="mode-select-checkbox-label">
             <input
               type="checkbox"
@@ -71,15 +76,17 @@ function ModeSelectScreen() {
       <div className="mode-select-bottom">
         <button
           className="mode-select-start-btn"
-          style={isStartDisabled ? { background: '#e0e0e0', color: '#aaa', cursor: 'not-allowed' } : {}}
-          disabled={isStartDisabled}
+          style={isStartDisabled || invalidRange ? { background: '#e0e0e0', color: '#aaa', cursor: 'not-allowed' } : {}}
+          disabled={!!isStartDisabled || !!invalidRange}
           onClick={() => {
             if (!rangeMin || !rangeMax) {
               setRangeMinTouched(true);
               setRangeMaxTouched(true);
               return;
             }
-            navigate('/result', { state: { rangeMin, rangeMax, allowDuplicate } });
+            if (!invalidRange) {
+              navigate('/result', { state: { rangeMin, rangeMax, allowDuplicate } });
+            }
           }}
         >
           시작하기

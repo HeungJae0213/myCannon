@@ -9,6 +9,13 @@ interface LoadAppsInTossAdMobOptions {
 declare global {
   interface Window {
     loadAppsInTossAdMob?: (options: LoadAppsInTossAdMobOptions) => void;
+    saveBase64Data?: (options: {
+      base64Data: string;
+      fileName: string;
+      mimeType: string;
+      onSuccess?: () => void;
+      onError?: () => void;
+    }) => void;
   }
 }
 

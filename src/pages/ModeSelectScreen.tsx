@@ -16,11 +16,15 @@ function ModeSelectScreen() {
   const [singleTouched, setSingleTouched] = useState(false);
   const [rangeMinTouched, setRangeMinTouched] = useState(false);
   const [rangeMaxTouched, setRangeMaxTouched] = useState(false);
+  const [modeTouched, setModeTouched] = useState(false);
 
   // UX writing (Toss style)
-  const singleCountError = singleTouched && !singleCount ? '공 개수를 입력해 주세요' : '';
+  const singleCountError = singleTouched && !singleCount ? '공 갯수를 입력해 주세요' : '';
   const rangeMinError = rangeMinTouched && !rangeMin ? '공 최소값을 입력해 주세요' : '';
   const rangeMaxError = rangeMaxTouched && !rangeMax ? '공 최대값을 입력해 주세요' : '';
+  const modeError = modeTouched && !mode ? '모드를 선택해 주세요' : '';
+
+  const isStartDisabled = !mode;
 
   return (
     <div className="mode-select-screen">
@@ -30,7 +34,7 @@ function ModeSelectScreen() {
         </div>
       </div>
       <div className="mode-select-cannon-area">
-        <CannonBody width={500} height={230} />
+        <CannonBody width={500} height={150} />
       </div>
       <div className="mode-select-content">
         <div className="mode-select-mode-buttons">
@@ -47,6 +51,9 @@ function ModeSelectScreen() {
             범위 숫자
           </button>
         </div>
+        {modeError && (
+          <div className="mode-select-error-text">{modeError}</div>
+        )}
         {mode === 'single' && (
           <div className="mode-select-input-group">
             <input
@@ -119,7 +126,13 @@ function ModeSelectScreen() {
       <div className="mode-select-bottom">
         <button
           className="mode-select-start-btn"
+          style={isStartDisabled ? { background: '#e0e0e0', color: '#aaa', cursor: 'not-allowed' } : {}}
+          disabled={isStartDisabled}
           onClick={() => {
+            if (!mode) {
+              setModeTouched(true);
+              return;
+            }
             if (
               (mode === 'single' && !singleCount) ||
               (mode === 'range' && (!rangeMin || !rangeMax))

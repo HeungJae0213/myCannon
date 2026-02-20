@@ -1,0 +1,101 @@
+.result-screen {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background: #181818;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  overflow: hidden;
+}
+
+.cannon-image {
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 100vw;
+  max-width: 480px;
+  z-index: 1;
+}
+
+.cannon-ball-on-cannon {
+  position: fixed;
+  left: 50%;
+  bottom: 80px;
+  transform: translateX(-50%);
+  width: 96px;
+  height: 96px;
+  background: #ffe600;
+  border-radius: 50%;
+  border: 7px solid #666;
+  box-shadow: 0 2px 12px #0003;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.cannon-ball-on-cannon::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: #ffe600;
+  border: 7px solid #666;
+  box-sizing: border-box;
+  z-index: 1;
+}
+
+.cannon-ball-count {
+  position: relative;
+  z-index: 2;
+  color: #222;
+  font-size: 1.6rem;
+  font-weight: 900;
+  text-align: center;
+  letter-spacing: -0.02em;
+}
+
+.fire-count {
+  color: #fff;
+  font-size: 1.7rem;
+  font-weight: 900;
+  margin-top: 32px;
+  margin-bottom: 0;
+  text-align: center;
+  width: 100vw;
+  letter-spacing: -0.01em;
+  text-shadow: 0 2px 8px #000a;
+}
+
+.fire-count-center {
+  display: block;
+  margin-left: 0;
+  align-self: center;
+}
+
+.fire-btn {
+  background: #267dff;
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  padding: 16px 32px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+  margin-left: 16px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #0002;
+  transition: background 0.2s;
+}
+
+.fire-btn:active {
+  background: #155ecb;
+}

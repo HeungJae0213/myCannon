@@ -142,7 +142,7 @@ function ModeSelectScreen() {
               setRangeMaxTouched(true);
               return;
             }
-            navigate('/fire', { state: { mode, singleCount, rangeMin, rangeMax, allowDuplicate } });
+            navigate('/result', { state: { mode, singleCount, rangeMin, rangeMax, allowDuplicate } });
           }}
         >
           시작하기

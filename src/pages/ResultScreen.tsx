@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import '../assets/ResultScreen.css';
 import WelcomeBall from '../components/WelcomeBall';
@@ -35,6 +35,7 @@ function ResultScreen() {
   const [currentNumber, setCurrentNumber] = useState<number|null>(null);
   const toastTimeout = useRef<number | null>(null);
   const animationRef = useRef<number | null>(null);
+  const [, setShowConfetti] = useState(false);
   // 광고 ID는 .env에서 가져옴
   const interstitialAdId = import.meta.env.VITE_INTERSTITIAL_AD_ID;
 
@@ -210,7 +211,6 @@ function ResultScreen() {
   };
 
   const [resultVisible, setResultVisible] = useState(false);
-  const [showConfetti, setShowConfetti] = useState(false);
 
   // 저장하기 버튼 클릭 시 갤러리 저장 (캡처)
   const handleSave = async () => {
@@ -243,13 +243,15 @@ function ResultScreen() {
     <div className="result-screen">
       <div className="fire-row fire-row-top">
         <span className="fire-count-left">발사 횟수: {fireCount}</span>
-        <button className="charge-badge-btn" onClick={() => {
-          if (chargeCooldown) return;
-          setChargeCooldown(true);
-          setTimeout(() => setChargeCooldown(false), 1000);
-          setShowAdModal(true);
-        }}
-        disabled={chargeCooldown}
+        <button
+          className="charge-badge-btn"
+          onClick={() => {
+            if (chargeCooldown) return;
+            setChargeCooldown(true);
+            setTimeout(() => setChargeCooldown(false), 1000);
+            setShowAdModal(true);
+          }}
+          disabled={chargeCooldown}
         >
           충전
         </button>

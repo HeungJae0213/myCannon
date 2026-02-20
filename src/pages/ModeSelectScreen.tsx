@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ModeSelectScreen.css';
 
+
 function ModeSelectScreen() {
   const navigate = useNavigate();
   const [mode, setMode] = useState('');
@@ -11,6 +12,15 @@ function ModeSelectScreen() {
   const [rangeMin, setRangeMin] = useState('');
   const [rangeMax, setRangeMax] = useState('');
   const [allowDuplicate, setAllowDuplicate] = useState(false);
+  // touched states for validation
+  const [singleTouched, setSingleTouched] = useState(false);
+  const [rangeMinTouched, setRangeMinTouched] = useState(false);
+  const [rangeMaxTouched, setRangeMaxTouched] = useState(false);
+
+  // UX writing (Toss style)
+  const singleCountError = singleTouched && !singleCount ? '공 개수를 입력해 주세요' : '';
+  const rangeMinError = rangeMinTouched && !rangeMin ? '공 최소값을 입력해 주세요' : '';
+  const rangeMaxError = rangeMaxTouched && !rangeMax ? '공 최대값을 입력해 주세요' : '';
 
   return (
     <div className="mode-select-screen">
@@ -41,11 +51,18 @@ function ModeSelectScreen() {
           <div className="mode-select-input-group">
             <input
               type="number"
+              inputMode="numeric"
+              pattern="[0-9]*"
               placeholder="공 갯수"
               value={singleCount}
-              onChange={e => setSingleCount(e.target.value)}
+              onChange={e => setSingleCount(e.target.value.replace(/[^0-9]/g, ''))}
+              onBlur={() => setSingleTouched(true)}
               className="mode-select-input"
+              required
             />
+            {singleCountError && (
+              <div className="mode-select-error-text">{singleCountError}</div>
+            )}
             <label className="mode-select-checkbox-label">
               <input
                 type="checkbox"
@@ -61,18 +78,32 @@ function ModeSelectScreen() {
           <div className="mode-select-input-group">
             <input
               type="number"
+              inputMode="numeric"
+              pattern="[0-9]*"
               placeholder="공 최소값"
               value={rangeMin}
-              onChange={e => setRangeMin(e.target.value)}
+              onChange={e => setRangeMin(e.target.value.replace(/[^0-9]/g, ''))}
+              onBlur={() => setRangeMinTouched(true)}
               className="mode-select-input"
+              required
             />
+            {rangeMinError && (
+              <div className="mode-select-error-text">{rangeMinError}</div>
+            )}
             <input
               type="number"
+              inputMode="numeric"
+              pattern="[0-9]*"
               placeholder="공 최대값"
               value={rangeMax}
-              onChange={e => setRangeMax(e.target.value)}
+              onChange={e => setRangeMax(e.target.value.replace(/[^0-9]/g, ''))}
+              onBlur={() => setRangeMaxTouched(true)}
               className="mode-select-input"
+              required
             />
+            {rangeMaxError && (
+              <div className="mode-select-error-text">{rangeMaxError}</div>
+            )}
             <label className="mode-select-checkbox-label">
               <input
                 type="checkbox"
@@ -88,7 +119,18 @@ function ModeSelectScreen() {
       <div className="mode-select-bottom">
         <button
           className="mode-select-start-btn"
-          onClick={() => navigate('/fire', { state: { mode, singleCount, rangeMin, rangeMax, allowDuplicate } })}
+          onClick={() => {
+            if (
+              (mode === 'single' && !singleCount) ||
+              (mode === 'range' && (!rangeMin || !rangeMax))
+            ) {
+              setSingleTouched(true);
+              setRangeMinTouched(true);
+              setRangeMaxTouched(true);
+              return;
+            }
+            navigate('/fire', { state: { mode, singleCount, rangeMin, rangeMax, allowDuplicate } });
+          }}
         >
           시작하기
         </button>

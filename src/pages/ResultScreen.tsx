@@ -121,10 +121,6 @@ function ResultScreen() {
           </div>
         </div>
       )}
-      {/* 대포알 애니메이션 (항상 노란 원 + 발사! 텍스트) */}
-      <div className="cannon-ball-on-cannon">
-        <span className="cannon-ball-count">발사</span>
-      </div>
       <img
         src={import.meta.env.BASE_URL + 'cannon.png'}
         alt="cannon"

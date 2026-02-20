@@ -1,0 +1,127 @@
+.cannonball-container {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 40px 0;
+}
+
+.cannonball {
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle at 30% 30%, #4a4a4a, #1a1a1a);
+  border-radius: 50%;
+  position: relative;
+  box-shadow: 
+    inset -10px -10px 20px rgba(0, 0, 0, 0.5),
+    inset 5px 5px 10px rgba(255, 255, 255, 0.1),
+    0 10px 30px rgba(0, 0, 0, 0.5);
+  animation: cannonball-journey 2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 반짝이는 효과 */
+.ball-shine {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.6), transparent);
+  border-radius: 50%;
+  top: 20px;
+  left: 30px;
+  animation: shine-pulse 1.5s ease-in-out infinite;
+}
+
+/* 숫자 표시 */
+.ball-number {
+  font-size: 60px;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 
+    0 0 10px rgba(255, 255, 255, 0.8),
+    0 0 20px rgba(255, 255, 255, 0.6),
+    2px 2px 4px rgba(0, 0, 0, 0.5);
+  z-index: 10;
+  animation: number-appear 0.5s ease-out;
+}
+
+/* 대포알이 날아갔다 돌아오는 애니메이션 */
+@keyframes cannonball-journey {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  25% {
+    transform: translate(200px, -300px) scale(0.3) rotate(180deg);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translate(300px, -400px) scale(0.2) rotate(360deg);
+    opacity: 0.3;
+  }
+  75% {
+    transform: translate(200px, -300px) scale(0.5) rotate(540deg);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate(0, 0) scale(1) rotate(720deg);
+    opacity: 1;
+  }
+}
+
+/* 반짝임 애니메이션 */
+@keyframes shine-pulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.2);
+  }
+}
+
+/* 숫자 나타나기 애니메이션 */
+@keyframes number-appear {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 모바일 대응 */
+@media (max-width: 768px) {
+  @keyframes cannonball-journey {
+    0% {
+      transform: translate(0, 0) scale(1);
+      opacity: 1;
+    }
+    25% {
+      transform: translate(100px, -200px) scale(0.3) rotate(180deg);
+      opacity: 0.7;
+    }
+    50% {
+      transform: translate(150px, -250px) scale(0.2) rotate(360deg);
+      opacity: 0.3;
+    }
+    75% {
+      transform: translate(100px, -200px) scale(0.5) rotate(540deg);
+      opacity: 0.7;
+    }
+    100% {
+      transform: translate(0, 0) scale(1) rotate(720deg);
+      opacity: 1;
+    }
+  }
+}

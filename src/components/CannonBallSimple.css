@@ -1,0 +1,27 @@
+.cannonball-simple {
+  position: absolute;
+  left: 120px; /* 대포 입구 위치에 맞게 조정 */
+  top: 70px;  /* 대포 입구 위치에 맞게 조정 */
+  width: 32px;
+  height: 32px;
+  background: radial-gradient(circle at 30% 30%, #444, #111 80%);
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  z-index: 10;
+  animation: cannonball-fly 1.2s cubic-bezier(0.4,0,0.2,1) forwards;
+}
+
+@keyframes cannonball-fly {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  80% {
+    transform: translate(320px, -120px) scale(0.7);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(420px, -180px) scale(0.5);
+    opacity: 0;
+  }
+}

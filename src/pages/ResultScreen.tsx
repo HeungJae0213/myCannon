@@ -25,6 +25,8 @@ function ResultScreen() {
   const [showLoadingModal, setShowLoadingModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [firing, setFiring] = useState(false);
+  const [fireCooldown, setFireCooldown] = useState(false);
+  const [chargeCooldown, setChargeCooldown] = useState(false);
   // ballPhase state removed (animation handled by resultVisible/firing)
   const [ballY, setBallY] = useState(0); // px
   const [ballScale, setBallScale] = useState(1);
@@ -36,20 +38,13 @@ function ResultScreen() {
   // 광고 ID는 .env에서 가져옴
   const interstitialAdId = import.meta.env.VITE_INTERSTITIAL_AD_ID;
 
-  // 광고 로딩 (Toss Bedrock API)
+  // 광고 로딩 관련 정리: 광고는 '광고 보기' 버튼 클릭 시에만 loadAppsInTossAdMob 호출
   useEffect(() => {
-    if (window.loadAppsInTossAdMob && interstitialAdId) {
-      window.loadAppsInTossAdMob({
-        adUnitId: interstitialAdId,
-        adType: 'interstitial',
-        testMode: true,
-      });
-    }
     return () => {
       if (toastTimeout.current) clearTimeout(toastTimeout.current);
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
     };
-  }, [interstitialAdId]);
+  }, []);
 
   // 발사 애니메이션
   const animateFire = () => {
@@ -65,7 +60,7 @@ function ResultScreen() {
       let scale = 1;
       const targetY = 180; // px 위로
       const targetScale = 0.25;
-      const duration = 700;
+      const duration = 400;
       const start = performance.now();
       function step(now: number) {
         const t = Math.min((now - start) / duration, 1);
@@ -94,6 +89,7 @@ function ResultScreen() {
                 setShowNumber(true);
                 setResultVisible(true);
                 setShowConfetti(true);
+                setFiring(false); // 애니메이션 종료 후 발사 가능하게
                 // setTimeout(() => {
                 //   setBallPhase('idle');
                 //   setFiring(false);
@@ -110,7 +106,9 @@ function ResultScreen() {
 
   // 발사 버튼 클릭
   const handleFire = () => {
-    if (firing || fireCount <= 0) return;
+    if (firing || fireCount <= 0 || fireCooldown) return;
+    setFireCooldown(true);
+    setTimeout(() => setFireCooldown(false), 1000);
     // 결과 공/숫자 숨기고 애니메이션부터 시작
     setResultVisible(false);
     setShowNumber(false);
@@ -245,12 +243,19 @@ function ResultScreen() {
     <div className="result-screen">
       <div className="fire-row fire-row-top">
         <span className="fire-count-left">발사 횟수: {fireCount}</span>
-        <button className="charge-badge-btn" onClick={() => setShowAdModal(true)}>
+        <button className="charge-badge-btn" onClick={() => {
+          if (chargeCooldown) return;
+          setChargeCooldown(true);
+          setTimeout(() => setChargeCooldown(false), 1000);
+          setShowAdModal(true);
+        }}
+        disabled={chargeCooldown}
+        >
           충전
         </button>
       </div>
       {/* 빨간 대포알(충전) - 발사 횟수 1 이상, 발사 중 아닐 때만 */}
-      {fireCount > 0 && !firing && (
+      {fireCount > 0 && !firing && !(resultVisible && showNumber) && (
         <div className="charged-red-ball-container">
           <div className="charged-red-ball-half">
             <WelcomeBall size={300} />
@@ -319,12 +324,14 @@ function ResultScreen() {
       <div
         className="cannon-ball-on-cannon cannon-ball-fire-btn"
         onClick={() => {
+          if (fireCooldown) return;
           if (fireCount <= 0) setShowAdModal(true);
           else handleFire();
         }}
         role="button"
         tabIndex={0}
         aria-label="발사"
+        style={fireCooldown ? { opacity: 0.5, pointerEvents: 'none' } : {}}
       >
         <span className="cannon-ball-count">발사</span>
       </div>
@@ -357,7 +364,12 @@ function ResultScreen() {
               </button>
               <button
                 className="ad-modal-btn ad-modal-btn-blue"
-                onClick={() => tryShowAd(0)}
+                onClick={() => {
+                  tryShowAd(0);
+                  setResultVisible(false);
+                  setFiring(false);
+                  setShowNumber(false);
+                }}
                 disabled={adLoading}
               >
                 광고 보기

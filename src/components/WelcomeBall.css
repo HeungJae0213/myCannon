@@ -7,6 +7,7 @@
   background: radial-gradient(circle at 35% 30%, #ff4d4d 60%, #a80000 100%);
   box-shadow: 0 8px 32px #000a, 0 2px 8px #a80000, 0 0 0 4px #222 inset;
   margin: 0 auto;
+  /* width/height는 WelcomeBall의 size prop으로만 제어 */
 }
 
 .welcome-ball-number {

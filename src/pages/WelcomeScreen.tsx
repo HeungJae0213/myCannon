@@ -24,12 +24,11 @@ function WelcomeScreen() {
       </div>
       <div className="welcome-content">
         <div className="welcome-ball-area">
-          <WelcomeBall number={4} />
+          <WelcomeBall number={7} size={200} />
         </div>
         <div className="cannon-body-area">
-          <CannonBody />
+          <CannonBody width={450} height={300} />
         </div>
-        <div className="welcome-content-spacer" />
       </div>
       <div className="welcome-bottom">
         <button className="welcome-button" onClick={handleClick}>

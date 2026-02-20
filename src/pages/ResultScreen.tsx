@@ -145,7 +145,9 @@ function ResultScreen() {
           <div className="ad-modal toss-ad-modal">
             <button className="ad-modal-close" onClick={() => setShowAdModal(false)} aria-label="닫기">×</button>
             <div className="ad-modal-icon" aria-hidden="true">🎁</div>
-            <div className="ad-modal-title">발사 횟수가 부족해요!</div>
+            <div className="ad-modal-title">
+              {fireCount >= 1 ? '발사 횟수를 더 충전할 수 있어요!' : '발사 횟수가 부족해요!'}
+            </div>
             <div className="ad-modal-desc">
               광고를 끝까지 시청하면 <span className="ad-modal-highlight">5번의 횟수</span>를 드려요<br />
               <span className="ad-modal-desc-sub">(광고를 보지 않으면 1회만 지급됩니다)</span>

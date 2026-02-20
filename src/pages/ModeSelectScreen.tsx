@@ -2,7 +2,7 @@
 import CannonBody from '../components/CannonBody';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './ModeSelectScreen.css';
+import '../assets/ModeSelectScreen.css';
 
 
 function ModeSelectScreen() {

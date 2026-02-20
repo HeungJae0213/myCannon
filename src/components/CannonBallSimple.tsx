@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import './CannonBallSimple.css';
+import '../assets/CannonBallSimple.css';
 
 interface CannonBallSimpleProps {
   firing: boolean;

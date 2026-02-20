@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Button, Modal } from '@toss/tds-mobile';
 import CannonBody from '../components/CannonBody';
 import CannonBallSimple from '../components/CannonBallSimple';
-import '../components/CannonBallSimple.css';
+import '../assets/CannonBallSimple.css';
 
 function FireScreen() {
   const navigate = useNavigate();

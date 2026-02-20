@@ -1,5 +1,5 @@
 import React from 'react';
-import './WelcomeBall.css';
+import '../assets/WelcomeBall.css';
 
 interface WelcomeBallProps {
   number: number;

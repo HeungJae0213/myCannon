@@ -4,7 +4,7 @@ import ModeSelectScreen from './pages/ModeSelectScreen';
 import FireScreen from './pages/FireScreen';
 import ResultScreen from './pages/ResultScreen';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import './fade-transition.css';
+import './assets/fade-transition.css';
 
 function AnimatedRoutes() {
   const location = useLocation();

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './CannonBall.css';
+import '../assets/CannonBall.css';
 
 interface CannonBallProps {
   number: number;

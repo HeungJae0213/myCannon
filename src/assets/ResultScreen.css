@@ -1,3 +1,36 @@
+/* 발사 버튼 뒤에 반만 보이는 빨간 대포알 (충전) */
+.charged-red-ball-container {
+  position: fixed;
+  left: 50%;
+  /* 대포 입구 위로 70~90px 띄워서 보이게 조정 (실기기 기준) */
+  bottom: 220px;
+  width: 96px;
+  height: 48px;
+  transform: translateX(-50%);
+  z-index: 1;
+  pointer-events: none;
+}
+.charged-red-ball-half {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 200px;
+  height: 200px;
+  transform: translateX(-50%);
+  overflow: hidden;
+  border-radius: 35px 35px 0 0 / 35px 35px 0 0;
+  background: none;
+  z-index: 2;
+}
+.charged-red-ball-half .welcome-ball-3d {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translate(-50%, 35%);
+  width: 200px !important;
+  height: 200px !important;
+  box-shadow: 0 4px 16px #a8000033;
+}
 .result-screen {
   position: relative;
   width: 100vw;

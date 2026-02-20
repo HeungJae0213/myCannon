@@ -1,7 +1,7 @@
-//
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import '../assets/ResultScreen.css';
+import WelcomeBall from '../components/WelcomeBall';
 function getRandomFromMode(mode: string, singleCount: string, rangeMin: string, rangeMax: string) {
   if (mode === 'single') {
     const nums = singleCount.split(',').map((n: string) => parseInt(n.trim(), 10)).filter((n: number) => !isNaN(n));
@@ -127,6 +127,15 @@ function ResultScreen() {
           충전
         </button>
       </div>
+      {/* 빨간 대포알(충전) - 발사 횟수 1 이상일 때만 */}
+      {fireCount > 0 && (
+        <div className="charged-red-ball-container">
+          {/* WelcomeBall을 작게, 반만 보이게 배치 (숫자 없이) */}
+          <div className="charged-red-ball-half">
+            <WelcomeBall size={300} />
+          </div>
+        </div>
+      )}
       <div
         className="cannon-ball-on-cannon cannon-ball-fire-btn"
         onClick={() => {

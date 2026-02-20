@@ -23,7 +23,7 @@
 .cannon-ball-on-cannon {
   position: fixed;
   left: 50%;
-  bottom: 80px;
+  bottom: 70px;
   transform: translateX(-50%);
   width: 96px;
   height: 96px;
@@ -36,28 +36,25 @@
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
+  cursor: pointer;
+  user-select: none;
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+.cannon-ball-on-cannon:active {
+  box-shadow: 0 4px 16px #0005;
+  transform: translateX(-50%) scale(0.96);
 }
 
 .cannon-ball-on-cannon::before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
   width: 96px;
   height: 96px;
-  border-radius: 50%;
-  background: #ffe600;
-  border: 7px solid #666;
-  box-sizing: border-box;
-  z-index: 1;
 }
 
 .cannon-ball-count {
   position: relative;
   z-index: 2;
   color: #222;
-  font-size: 1.6rem;
+  font-size: 1.35rem;
   font-weight: 900;
   text-align: center;
   letter-spacing: -0.02em;
@@ -75,27 +72,47 @@
   text-shadow: 0 2px 8px #000a;
 }
 
-.fire-count-center {
-  display: block;
-  margin-left: 0;
-  align-self: center;
+.fire-row {
+  width: 100vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0;
+  margin-bottom: 0;
+  padding: 0 20px;
+  box-sizing: border-box;
+  position: absolute;
+  top: 24px;
+  left: 0;
+  z-index: 10;
+  height: 56px;
 }
 
-.fire-btn {
-  background: #267dff;
+.fire-row-top {
+  margin-top: 0;
+}
+
+.fire-count-left {
   color: #fff;
-  border: none;
-  border-radius: 14px;
-  padding: 16px 32px;
-  font-size: 1.1rem;
-  font-weight: 700;
-  margin-bottom: 32px;
-  margin-left: 16px;
-  cursor: pointer;
-  box-shadow: 0 2px 8px #0002;
-  transition: background 0.2s;
+  font-size: 1.7rem;
+  font-weight: 900;
+  letter-spacing: -0.01em;
 }
 
-.fire-btn:active {
-  background: #155ecb;
+.charge-badge-btn {
+  background: #1ecb83;
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 16px;
+  padding: 8px 22px;
+  box-shadow: 0 2px 8px #0002;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: inline-block;
+}
+
+.charge-badge-btn:active {
+  background: #159e62;
 }

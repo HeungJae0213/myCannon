@@ -48,15 +48,24 @@ function ResultScreen() {
 
   return (
     <div className="result-screen">
-      <div className="fire-count fire-count-center">발사 횟수: {fireCount}</div>
-      <button className="fire-btn" onClick={() => setShowAdModal(true)}>
-        발사권 충전
-      </button>
-      {fireCount > 0 && (
-        <button className="fire-btn" onClick={handleFire} style={{ marginLeft: 8 }}>
-          대포 발사
+      <div className="fire-row fire-row-top">
+        <span className="fire-count-left">발사 횟수: {fireCount}</span>
+        <button className="charge-badge-btn" onClick={() => setShowAdModal(true)}>
+          충전
         </button>
-      )}
+      </div>
+      <div
+        className="cannon-ball-on-cannon cannon-ball-fire-btn"
+        onClick={() => {
+          if (fireCount <= 0) setShowAdModal(true);
+          else handleFire();
+        }}
+        role="button"
+        tabIndex={0}
+        aria-label="발사"
+      >
+        <span className="cannon-ball-count">발사</span>
+      </div>
       {/* 광고 모달 */}
       {showAdModal && (
         <div className="ad-modal-bg">

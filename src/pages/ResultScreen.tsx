@@ -109,7 +109,7 @@ function ResultScreen() {
   const handleFire = () => {
     if (firing || fireCount <= 0 || fireCooldown) return;
     setFireCooldown(true);
-    setTimeout(() => setFireCooldown(false), 1000);
+    setTimeout(() => setFireCooldown(false), 2000);
     // 결과 공/숫자 숨기고 애니메이션부터 시작
     setResultVisible(false);
     setShowNumber(false);

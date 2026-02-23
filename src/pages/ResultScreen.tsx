@@ -1,9 +1,6 @@
-  // ...existing code...
-  // 남은 공 개수 계산 (중복 허용 안 할 때만)
-  // allowDuplicate, min, max, drawnNumbers 선언 이후에 위치해야 함
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import '../assets/ResultScreen.css';
 import WelcomeBall from '../components/WelcomeBall';
 
@@ -18,9 +15,15 @@ function getUniqueRandom(min: number, max: number, used: Set<number>): number | 
 
 function ResultScreen() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { rangeMin, rangeMax, allowDuplicate } = location.state || {};
   const min = parseInt(rangeMin, 10);
   const max = parseInt(rangeMax, 10);
+  const [drawnNumbers, setDrawnNumbers] = useState<Set<number>>(new Set());
+  // 남은 공 개수 계산 (중복 허용 안 할 때만)
+  const remainingBalls = allowDuplicate ? null : (max - min + 1 - drawnNumbers.size); 
+  const [showNoBallsMsg, setShowNoBallsMsg] = useState(false);
+  // 남은 공 개수 0일 때 페이지 이동은 handleFire에서만 처리
   const [fireCount, setFireCount] = useState(0);
   const [showAdModal, setShowAdModal] = useState(false);
   const [adLoading, setAdLoading] = useState(false);
@@ -34,7 +37,6 @@ function ResultScreen() {
   const [ballY, setBallY] = useState(0); // px
   const [ballScale, setBallScale] = useState(1);
   const [showNumber, setShowNumber] = useState(false);
-  const [drawnNumbers, setDrawnNumbers] = useState<Set<number>>(new Set());
   const [currentNumber, setCurrentNumber] = useState<number|null>(null);
   const toastTimeout = useRef<number | null>(null);
   const animationRef = useRef<number | null>(null);
@@ -111,6 +113,14 @@ function ResultScreen() {
   // 발사 버튼 클릭
   const handleFire = () => {
     if (firing || fireCount <= 0 || fireCooldown) return;
+    if (!allowDuplicate && remainingBalls === 0) {
+      setShowNoBallsMsg(true);
+      setTimeout(() => {
+        setShowNoBallsMsg(false);
+        navigate('/'); // 범위 입력 페이지로 이동
+      }, 2000);
+      return;
+    }
     setFireCooldown(true);
     setTimeout(() => setFireCooldown(false), 2000);
     // 결과 공/숫자 숨기고 애니메이션부터 시작
@@ -243,8 +253,14 @@ function ResultScreen() {
   };
 
   return (
-    <div className="result-screen">
-      <div className="fire-row fire-row-top" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+    <div>
+      {showNoBallsMsg && (
+        <div style={{ position: 'fixed', top: '30%', left: '50%', transform: 'translateX(-50%)', background: '#222', color: '#fff', fontSize: '1.2rem', fontWeight: 'bold', padding: '24px 32px', borderRadius: '18px', zIndex: 999 }}>
+          사용자에게 쏠 수 있는 공이 없습니다.<br />숫자 입력으로 돌아갑니다.
+        </div>
+      )}
+      <div className="result-screen">
+        <div className="fire-row fire-row-top" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           <span className="fire-count-left">발사 횟수: {fireCount}</span>
           {!allowDuplicate && (
@@ -325,14 +341,14 @@ function ResultScreen() {
           <div className="fired-number-reveal">{currentNumber}</div>
         </div>
       )}
-      {/* 저장하기 버튼: 공이 나왔을 때만, 발사횟수 아래, 파란색 버튼 */}
-      {resultVisible && showNumber && (
-        <div className="save-result-btn-row">
-          <button className="save-result-btn-blue" onClick={handleSave}>
-            저장하기
-          </button>
-        </div>
-      )}
+        {/* 저장하기 버튼: 숫자가 뽑힌 후 항상 보임 */}
+        {currentNumber !== null && (
+          <div className="save-result-btn-row">
+            <button className="save-result-btn-blue" onClick={handleSave}>
+              저장하기
+            </button>
+          </div>
+        )}
       <div
         className="cannon-ball-on-cannon cannon-ball-fire-btn"
         onClick={() => {
@@ -410,6 +426,7 @@ function ResultScreen() {
         draggable={false}
       />
     </div>
+  </div>
   );
 }
 

@@ -23,6 +23,7 @@ function ResultScreen() {
   const { rangeMin, rangeMax, allowDuplicate } = location.state || {};
   const min = parseInt(rangeMin, 10);
   const max = parseInt(rangeMax, 10);
+    const [ballColor, setBallColor] = useState<string>('');
   const [drawnNumbers, setDrawnNumbers] = useState<Set<number>>(new Set());
   // 남은 공 개수 계산 (중복 허용 안 할 때만)
   const remainingBalls = allowDuplicate ? null : (max - min + 1 - drawnNumbers.size); 
@@ -212,19 +213,23 @@ function ResultScreen() {
   // 저장하기 버튼 클릭 시 갤러리 저장 (캡처)
   const handleSave = async () => {
     try {
-      // 결과가 표시 중일 때만 저장 (resultVisible && showNumber)
-      if (!(resultVisible && showNumber)) {
-        // 기존 타이머 정리
-        if (saveToastTimerRef.current) {
-          clearTimeout(saveToastTimerRef.current);
+        // 공 색상을 빨강으로 강제 변경
+        setBallColor('red');
+        // DOM 업데이트 대기 (색상 적용)
+        await new Promise(resolve => setTimeout(resolve, 150));
+        // 결과가 표시 중일 때만 저장 (resultVisible && showNumber)
+        if (!(resultVisible && showNumber)) {
+          // 기존 타이머 정리
+          if (saveToastTimerRef.current) {
+            clearTimeout(saveToastTimerRef.current);
+          }
+          setSaveToast({ show: true, message: '먼저 공을 뽑아주세요!' });
+          saveToastTimerRef.current = setTimeout(() => {
+            setSaveToast({ show: false, message: '' });
+            saveToastTimerRef.current = undefined;
+          }, 2500);
+          return;
         }
-        setSaveToast({ show: true, message: '먼저 공을 뽑아주세요!' });
-        saveToastTimerRef.current = setTimeout(() => {
-          setSaveToast({ show: false, message: '' });
-          saveToastTimerRef.current = undefined;
-        }, 2500);
-        return;
-      }
 
       const blackArea = document.querySelector('.result-screen');
       if (!blackArea || !(blackArea instanceof HTMLElement)) {
@@ -248,6 +253,11 @@ function ResultScreen() {
         allowTaint: true,
         removeContainer: true,
         onclone: (clonedDoc: Document) => {
+            // 공 색상도 빨강으로 강제 적용
+            const ballEls = clonedDoc.querySelectorAll('.firing-red-ball-anim, .charged-red-ball-half');
+            ballEls.forEach(el => {
+              (el as HTMLElement).style.background = 'red';
+            });
           
         }
       });
@@ -260,6 +270,8 @@ function ResultScreen() {
       // Canvas 메모리 정리
       canvas.width = 0;
       canvas.height = 0;
+      // 공 색상 복구
+      setBallColor('');
 
       // Apps in Toss saveBase64Data API 사용
       try {
@@ -283,6 +295,10 @@ function ResultScreen() {
         // 샌드박스/로컬 등 미지원 환경에서는 브라우저 다운로드로 대체
         // Canvas가 이미 정리되었을 수 있으므로 다시 생성 필요
         try {
+          // 공 색상을 빨강으로 강제 변경
+          setBallColor('red');
+          // DOM 업데이트 대기 (색상 적용)
+          await new Promise(resolve => setTimeout(resolve, 150));
           const retryCanvas = await html2canvas(blackArea, {
             backgroundColor: null,
             scale: 1.5,
@@ -356,6 +372,8 @@ function ResultScreen() {
         saveToastTimerRef.current = undefined;
       }, 2500);
     }, 'image/png');
+    // 공 색상 복구
+    setBallColor('');
   };
 
   return (
@@ -426,6 +444,30 @@ function ResultScreen() {
           <WelcomeBall size={300} />
         </div>
       )}
+        {firing && (
+          <div
+            className="firing-red-ball-anim"
+            style={{
+              position: 'fixed',
+              left: '50%',
+              bottom: `250px`,
+              transform: `translateX(-50%) translateY(-${ballY}px) scale(${ballScale})`,
+              zIndex: 10,
+              pointerEvents: 'none',
+              borderRadius: '50%',
+              overflow: 'visible',
+              width: 300,
+              height: 300,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: ballColor ? ballColor : 'none',
+              flexDirection: 'column',
+            }}
+          >
+            <WelcomeBall size={300} />
+          </div>
+        )}
       {/* 결과 공/숫자: 애니메이션 끝나고만 보여줌 */}
       {resultVisible && showNumber && (
         <div
@@ -452,6 +494,31 @@ function ResultScreen() {
           <div className="fired-number-reveal">{currentNumber}</div>
         </div>
       )}
+        {resultVisible && showNumber && (
+          <div
+            className="firing-red-ball-anim"
+            style={{
+              position: 'fixed',
+              left: '50%',
+              bottom: `250px`,
+              transform: `translateX(-50%) scale(1)`,
+              zIndex: 10,
+              pointerEvents: 'none',
+              borderRadius: '50%',
+              overflow: 'visible',
+              width: 300,
+              height: 300,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: ballColor ? ballColor : 'none',
+              flexDirection: 'column',
+            }}
+          >
+            <WelcomeBall size={300} />
+            <div className="fired-number-reveal">{currentNumber}</div>
+          </div>
+        )}
         {/* 저장하기 버튼: 숫자가 뽑힌 후 항상 보임 */}
         {currentNumber !== null && (
           <div className="save-result-btn-row">

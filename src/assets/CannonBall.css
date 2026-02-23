@@ -1,3 +1,7 @@
+/*
+  대포알(메인) 스타일
+  - 컨테이너, 공, 반짝임, 숫자 등
+*/
 .cannonball-container {
   position: relative;
   width: 100%;

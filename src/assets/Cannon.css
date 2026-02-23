@@ -10,6 +10,10 @@
   position: relative;
   background: none;
 }
+/*
+  대포 일러스트 및 컨테이너 스타일
+  - 대포 본체, 배경, 위치 등
+*/
 .cannon-container {
   display: flex;
   align-items: center;

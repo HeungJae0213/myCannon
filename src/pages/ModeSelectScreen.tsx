@@ -1,9 +1,11 @@
+// 번호 범위/중복 여부 입력 및 시작 화면
 import CannonBody from '../components/CannonBody';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../assets/ModeSelectScreen.css';
 
 
+// 모드 선택 화면 렌더링 및 입력/검증/이동 처리
 function ModeSelectScreen() {
   const navigate = useNavigate();
   const [rangeMin, setRangeMin] = useState('');

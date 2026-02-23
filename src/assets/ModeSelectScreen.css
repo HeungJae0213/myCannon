@@ -1,3 +1,7 @@
+/*
+  모드 선택 화면 스타일
+  - 에러 텍스트, 뱃지, 전체 배경 등
+*/
 .mode-select-error-text {
   display: inline-block;
   background: #fff0f0;

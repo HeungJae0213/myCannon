@@ -1,9 +1,11 @@
+// 결과 화면(공 뽑기, 발사, 저장, 광고 등 전체 로직)
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import '../assets/ResultScreen.css';
 import WelcomeBall from '../components/WelcomeBall';
 
+// 중복 없는 랜덤 번호 추출 함수 (이미 뽑힌 번호 제외)
 function getUniqueRandom(min: number, max: number, used: Set<number>): number | null {
   const available = [];
   for (let i = min; i <= max; ++i) {
@@ -13,6 +15,7 @@ function getUniqueRandom(min: number, max: number, used: Set<number>): number | 
   return available[Math.floor(Math.random() * available.length)];
 }
 
+// 결과 화면 전체 로직 및 렌더링
 function ResultScreen() {
   const location = useLocation();
   const navigate = useNavigate();

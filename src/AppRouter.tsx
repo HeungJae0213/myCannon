@@ -1,3 +1,4 @@
+// 라우팅 및 페이지 전환 애니메이션 담당
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import WelcomeScreen from './pages/WelcomeScreen';
 import ModeSelectScreen from './pages/ModeSelectScreen';
@@ -5,6 +6,7 @@ import ResultScreen from './pages/ResultScreen';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import './assets/fade-transition.css';
 
+// 페이지 전환 시 페이드 애니메이션 적용
 function AnimatedRoutes() {
   const location = useLocation();
   return (
@@ -20,6 +22,7 @@ function AnimatedRoutes() {
   );
 }
 
+// 라우터 전체 구조 (BrowserRouter로 감쌈)
 function AppRouter() {
   return (
     <BrowserRouter>

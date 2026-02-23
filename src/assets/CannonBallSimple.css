@@ -1,3 +1,7 @@
+/*
+  간단한 대포알 애니메이션 스타일
+  - 위치, 크기, 비행 애니메이션 등
+*/
 .cannonball-simple {
   position: absolute;
   left: 120px; /* 대포 입구 위치에 맞게 조정 */

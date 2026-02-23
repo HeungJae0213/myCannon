@@ -1,7 +1,9 @@
+// 앱 첫 화면(웰컴/시작 화면)
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import WelcomeBall from '../components/WelcomeBall';
 import CannonBody from '../components/CannonBody';
+// 웰컴 화면 렌더링 및 시작 버튼 클릭 처리
 function WelcomeScreen() {
   const navigate = useNavigate();
   const [fadeOut, setFadeOut] = useState(false);

@@ -33,7 +33,7 @@
   width: 300px;
   height: 300px;
   transform: translateX(-50%);
-  z-index: 10;
+  z-index: 0;
   pointer-events: none;
   display: flex;
   align-items: center;
@@ -51,7 +51,7 @@
   font-weight: 900;
   color: #fff;
   text-shadow: 0 2px 16px #a80000, 0 0 0 #fff;
-  z-index: 20;
+  z-index: 5;
   animation: fired-number-pop 0.5s cubic-bezier(.4,1.6,.6,1);
 }
 
@@ -177,9 +177,9 @@
   padding: 0 20px;
   box-sizing: border-box;
   position: absolute;
-  top: 24px;
+  top: 35px;
   left: 0;
-  z-index: 10;
+  z-index: 20;
   height: 56px;
 }
 

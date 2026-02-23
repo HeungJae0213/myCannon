@@ -186,9 +186,9 @@ body, #root {
   width: 100vw;
   display: flex;
   justify-content: center;
-  margin-top: clamp(10px, 5vw, 30px); /* 빨간: 버튼-하단 간격 넓게 (값을 더 키우면 간격이 더 넓어짐) */
+  margin-top: clamp(24px, 6vw, 48px);      /* 버튼 위 간격 */
+  padding: 0 0 clamp(36px, 6vw, 48px) 0;  /* 버튼 아래 간격 */
   background: rgba(30,30,30,0.92);
-  padding: 0 0 clamp(20px, 5vw, 40px) 0;
   box-sizing: border-box;
 }
 .welcome-button {

@@ -24,10 +24,10 @@ function WelcomeScreen() {
       </div>
       <div className="welcome-content">
         <div className="welcome-ball-area">
-          <WelcomeBall number={7} size={200} />
+          <WelcomeBall number={7} size={160} /> {/* 공 크기 줄임 */}
         </div>
         <div className="cannon-body-area">
-          <CannonBody width={450} height={300} />
+          <CannonBody width={400} height={250} /> {/* 대포 크기 줄임 */}
         </div>
       </div>
       <div className="welcome-bottom">

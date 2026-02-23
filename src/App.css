@@ -42,12 +42,12 @@ body, #root {
   width: 100vw;
   display: flex;
   justify-content: center;
-  margin-top: 36px;
-  margin-bottom: 24px;
+  margin-top: clamp(16px, 5vw, 36px);
+  margin-bottom: clamp(12px, 3vw, 24px);
 }
 .welcome-title-bg {
   border-radius: 8px;
-  padding: 14px 0;
+  padding: clamp(8px, 2vw, 14px);
   min-width: 90vw;
   display: flex;
   align-items: center;
@@ -57,12 +57,13 @@ body, #root {
   font-family: 'Pretendard', 'system-ui', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif;
   font-weight: 900;
   color: #fff;
-  font-size: 1.8rem;
+  font-size: clamp(1.2rem, 6vw, 2.1rem);
   line-height: 1.2;
   text-align: center;
-  white-space: nowrap;
   letter-spacing: -0.01em;
   text-shadow: 0 2px 8px #000a;
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 .welcome-content {
   width: 100vw;
@@ -76,8 +77,8 @@ body, #root {
   justify-content: center;
   align-items: flex-end;
   width: 100vw;
-  margin-bottom: -20px;
-  margin-top: 30px;
+  margin-bottom: clamp(-10px, -2vw, -20px);
+  margin-top: clamp(4px, 1vw, 12px);
   z-index: 2;
 }
 .cannon-body-area {
@@ -85,8 +86,8 @@ body, #root {
   justify-content: center;
   align-items: flex-start;
   width: 100vw;
-  margin-top: 60px;
-  margin-bottom: -20px;
+  margin-top: clamp(8px, 2vw, 20px);
+  margin-bottom: clamp(-10px, -2vw, -20px);
   z-index: 1;
 }
 .welcome-bottom {
@@ -95,7 +96,7 @@ body, #root {
   justify-content: center;
   margin-top: auto;
   background: rgba(30,30,30,0.92);
-  padding: 0 0 25px 0;
+  padding: 0 0 clamp(12px, 4vw, 25px) 0;
   box-sizing: border-box;
 }
 .welcome-button {
@@ -143,6 +144,7 @@ body, #root {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: clamp(20px, 5vw, 40px); /* 빨간: 제목-공 간격 넓게 (값을 더 키우면 간격이 더 넓어짐) */
 }
 .welcome-title-text {
   font-family: 'Pretendard', 'system-ui', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif;
@@ -167,8 +169,8 @@ body, #root {
   justify-content: center;
   align-items: flex-end;
   width: 100vw;
-  margin-bottom: clamp(-10px, -2vw, -20px);
-  margin-top: clamp(10px, 5vw, 30px);
+  margin-bottom: clamp(2px, 1vw, 4px); /* 파란: 공-대포 간격 좁게 (값을 더 작게/음수로 하면 간격이 더 좁아짐) */
+  margin-top: clamp(20px, 2vw, 40px); /* 파란: 공-공 간격 좁게 (값을 더 작게 하면 간격이 더 좁아짐) */
   z-index: 2;
 }
 .cannon-body-area {
@@ -176,17 +178,17 @@ body, #root {
   justify-content: center;
   align-items: flex-start;
   width: 100vw;
-  margin-top: clamp(20px, 8vw, 60px);
-  margin-bottom: clamp(-10px, -2vw, -20px);
+  margin-top: clamp(50px, 2vw, 70px); /* 파란: 대포-버튼 간격 좁게 (값을 더 작게 하면 간격이 더 좁아짐) */
+  margin-bottom: clamp(-30px, -2vw, -60px);
   z-index: 1;
 }
 .welcome-bottom {
   width: 100vw;
   display: flex;
   justify-content: center;
-  margin-top: auto;
+  margin-top: clamp(10px, 5vw, 30px); /* 빨간: 버튼-하단 간격 넓게 (값을 더 키우면 간격이 더 넓어짐) */
   background: rgba(30,30,30,0.92);
-  padding: 0 0 clamp(12px, 4vw, 25px) 0;
+  padding: 0 0 clamp(20px, 5vw, 40px) 0;
   box-sizing: border-box;
 }
 .welcome-button {
@@ -210,7 +212,10 @@ body, #root {
 }
 @media (max-width: 600px) {
   .welcome-title-text {
-    font-size: clamp(1rem, 6vw, 1.4rem);
+    font-size: clamp(1rem, 8vw, 1.4rem);
+    padding-left: 2vw;
+    padding-right: 2vw;
+    white-space: normal;
   }
   .welcome-button {
     font-size: clamp(0.9rem, 5vw, 1.1rem);

@@ -256,7 +256,7 @@ function ResultScreen() {
     <div>
       {showNoBallsMsg && (
         <div style={{ position: 'fixed', top: '30%', left: '50%', transform: 'translateX(-50%)', background: '#222', color: '#fff', fontSize: '1.2rem', fontWeight: 'bold', padding: '24px 32px', borderRadius: '18px', zIndex: 999 }}>
-          사용자에게 쏠 수 있는 공이 없습니다.<br />숫자 입력으로 돌아갑니다.
+          쏠 수 있는 공이 없어요<br />처음 페이지로 돌아가요
         </div>
       )}
       <div className="result-screen">
@@ -374,7 +374,7 @@ function ResultScreen() {
             </div>
             <div className="ad-modal-desc">
               광고를 끝까지 시청하면 <span className="ad-modal-highlight">5번의 횟수</span>를 드려요<br />
-              <span className="ad-modal-desc-sub">(광고를 보지 않으면 1회만 지급됩니다)</span>
+              <span className="ad-modal-desc-sub">(광고를 보지 않으면 1회만 지급돼요)</span>
             </div>
             <div className="ad-modal-btn-row">
               <button
@@ -412,13 +412,13 @@ function ResultScreen() {
           <div className="ad-loading-modal">
             <div className="ad-loading-icon"><span className="hourglass-anim" role="img" aria-label="로딩">⏳</span></div>
             <div className="ad-loading-title">광고를 불러오는 중...</div>
-            <div className="ad-loading-desc">최대 3회까지 시도합니다</div>
+            <div className="ad-loading-desc">최대 3회까지 시도해요</div>
             <div className="ad-loading-retry">{adRetryCount + 1} / 3</div>
           </div>
         </div>
       )}
       {/* 광고 실패 토스트 */}
-      <div className={`ad-toast${showToast ? ' show' : ''}`}>광고 로딩에 실패했습니다. 1회 기회를 드립니다.</div>
+      <div className={`ad-toast${showToast ? ' show' : ''}`}>광고 로딩에 실패했어요. 1회 기회를 드려요.</div>
       <img
         src={import.meta.env.BASE_URL + 'cannon.png'}
         alt="cannon"

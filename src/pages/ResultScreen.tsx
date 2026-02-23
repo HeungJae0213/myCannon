@@ -1,3 +1,6 @@
+  // ...existing code...
+  // 남은 공 개수 계산 (중복 허용 안 할 때만)
+  // allowDuplicate, min, max, drawnNumbers 선언 이후에 위치해야 함
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -241,8 +244,15 @@ function ResultScreen() {
 
   return (
     <div className="result-screen">
-      <div className="fire-row fire-row-top">
-        <span className="fire-count-left">발사 횟수: {fireCount}</span>
+      <div className="fire-row fire-row-top" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+          <span className="fire-count-left">발사 횟수: {fireCount}</span>
+          {!allowDuplicate && (
+            <span className="fire-count-left" style={{ marginTop: 0 }}>
+              남은 공 개수: {max - min + 1 - drawnNumbers.size}
+            </span>
+          )}
+        </div>
         <button
           className="charge-badge-btn"
           onClick={() => {

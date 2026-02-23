@@ -232,7 +232,7 @@ function ResultScreen() {
         return;
       }
       // DOM 업데이트 대기
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise(resolve => setTimeout(resolve, 200));
       let html2canvas: (el: HTMLElement, options?: object) => Promise<HTMLCanvasElement>;
       try {
         html2canvas = (await import('html2canvas')).default;
@@ -241,15 +241,20 @@ function ResultScreen() {
         return;
       }
       const canvas = await html2canvas(blackArea, {
-        backgroundColor: null,
+        backgroundColor: "#fff",
         scale: 1.5,
         logging: false,
         useCORS: true,
         allowTaint: true,
         removeContainer: true,
-        onclone: (clonedDoc: Document) => {
-          // 필요시 스타일 최적화
-        }
+        // onclone: (clonedDoc: Document) => {
+        //   // 클론된 문서에서 불필요한 요소 제거로 메모리 절약
+        //   const clonedTarget = clonedDoc.querySelector('.result-page');
+        //   if (clonedTarget) {
+        //     // 스타일 최적화로 렌더링 부하 감소
+        //     clonedTarget.style.willChange = 'auto';
+        //   }
+        // }
       });
 
       // Canvas를 Base64로 변환 (JPEG로 압축하여 메모리 및 파일 크기 감소)
@@ -263,8 +268,17 @@ function ResultScreen() {
 
       // Apps in Toss saveBase64Data API 사용
       try {
-        if (typeof (window as unknown as { saveBase64Data?: (args: { base64Data: string; fileName: string; mimeType: string; onSuccess: () => void; onError: () => void }) => void }).saveBase64Data === 'function') {
-          await (window as unknown as { saveBase64Data: (args: { base64Data: string; fileName: string; mimeType: string; onSuccess: () => void; onError: () => void }) => void }).saveBase64Data({
+        type SaveBase64DataArgs = {
+          base64Data: string;
+          fileName: string;
+          mimeType: string;
+          onSuccess: () => void;
+          onError: () => void;
+        };
+        type SaveBase64DataFunc = (args: SaveBase64DataArgs) => void;
+        const win = window as typeof window & { saveBase64Data?: SaveBase64DataFunc };
+        if (typeof win.saveBase64Data === 'function') {
+          win.saveBase64Data({
             base64Data,
             fileName: filename,
             mimeType: 'image/jpeg',
@@ -286,7 +300,6 @@ function ResultScreen() {
             }
           });
         } else {
-          // 샌드박스/로컬 등 미지원 환경에서는 브라우저 다운로드로 대체
           fallbackDownload(canvas, filename.replace('.jpg', '.png'));
         }
       } catch (saveError) {

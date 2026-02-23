@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import '../assets/ResultScreen.css';
 import WelcomeBall from '../components/WelcomeBall';
-import { loadFullScreenAd, showFullScreenAd } from '@apps-in-toss/web-framework';
+import { loadFullScreenAd, showFullScreenAd, saveBase64Data } from '@apps-in-toss/web-framework';
 
 // 중복 없는 랜덤 번호 추출 함수 (이미 뽑힌 번호 제외)
 function getUniqueRandom(min: number, max: number, used: Set<number>): number | null {
@@ -226,7 +226,7 @@ function ResultScreen() {
         return;
       }
 
-      const blackArea = document.querySelector('.firing-red-ball-anim');
+      const blackArea = document.querySelector('.result-screen');
       if (!blackArea || !(blackArea instanceof HTMLElement)) {
         setSaveToast({ show: true, message: '캡처 영역을 찾을 수 없습니다.' });
         return;
@@ -241,26 +241,21 @@ function ResultScreen() {
         return;
       }
       const canvas = await html2canvas(blackArea, {
-        backgroundColor: "#fff",
+        backgroundColor: null,
         scale: 1.5,
         logging: false,
         useCORS: true,
         allowTaint: true,
         removeContainer: true,
-        // onclone: (clonedDoc: Document) => {
-        //   // 클론된 문서에서 불필요한 요소 제거로 메모리 절약
-        //   const clonedTarget = clonedDoc.querySelector('.result-page');
-        //   if (clonedTarget) {
-        //     // 스타일 최적화로 렌더링 부하 감소
-        //     clonedTarget.style.willChange = 'auto';
-        //   }
-        // }
+        onclone: (clonedDoc: Document) => {
+          
+        }
       });
 
       // Canvas를 Base64로 변환 (JPEG로 압축하여 메모리 및 파일 크기 감소)
       const base64Data = canvas.toDataURL('image/jpeg', 0.9).split(',')[1];
       const timestamp = new Date().getTime();
-      const filename = `cannonball_result_${timestamp}.jpg`;
+      const filename = `대포뽑기_결과_${timestamp}.jpg`;
 
       // Canvas 메모리 정리
       canvas.width = 0;
@@ -268,53 +263,57 @@ function ResultScreen() {
 
       // Apps in Toss saveBase64Data API 사용
       try {
-        type SaveBase64DataArgs = {
-          base64Data: string;
-          fileName: string;
-          mimeType: string;
-          onSuccess: () => void;
-          onError: () => void;
-        };
-        type SaveBase64DataFunc = (args: SaveBase64DataArgs) => void;
-        const win = window as typeof window & { saveBase64Data?: SaveBase64DataFunc };
-        if (typeof win.saveBase64Data === 'function') {
-          win.saveBase64Data({
-            base64Data,
-            fileName: filename,
-            mimeType: 'image/jpeg',
-            onSuccess: () => {
-              setSaveToast({ show: true, message: '📷 갤러리에 저장했습니다!' });
-              if (saveToastTimerRef.current) clearTimeout(saveToastTimerRef.current);
-              saveToastTimerRef.current = setTimeout(() => {
-                setSaveToast({ show: false, message: '' });
-                saveToastTimerRef.current = undefined;
-              }, 2500);
-            },
-            onError: () => {
-              setSaveToast({ show: true, message: '저장에 실패했습니다.' });
-              if (saveToastTimerRef.current) clearTimeout(saveToastTimerRef.current);
-              saveToastTimerRef.current = setTimeout(() => {
-                setSaveToast({ show: false, message: '' });
-                saveToastTimerRef.current = undefined;
-              }, 2500);
-            }
-          });
-        } else {
-          fallbackDownload(canvas, filename.replace('.jpg', '.png'));
+        await saveBase64Data({
+          data: base64Data,
+          fileName: filename,
+          mimeType: 'image/jpeg', // JPEG로 변경
+        });
+        console.log('갤러리 저장 성공');
+        setSaveToast({ show: true, message: '📷 갤러리에 저장했습니다!' });
+        // 기존 타이머 정리
+        if (saveToastTimerRef.current) {
+          clearTimeout(saveToastTimerRef.current);
         }
+        saveToastTimerRef.current = setTimeout(() => {
+          setSaveToast({ show: false, message: '' });
+          saveToastTimerRef.current = undefined;
+        }, 2500);
       } catch (saveError) {
-        // 실패 시 브라우저 다운로드로 대체
-        fallbackDownload(canvas, filename.replace('.jpg', '.png'));
+        console.warn('갤러리 저장 실패, 브라우저 다운로드로 대체:', saveError);
+        // 샌드박스/로컬 등 미지원 환경에서는 브라우저 다운로드로 대체
+        // Canvas가 이미 정리되었을 수 있으므로 다시 생성 필요
+        try {
+          const retryCanvas = await html2canvas(blackArea, {
+            backgroundColor: null,
+            scale: 1.5,
+            logging: false,
+            useCORS: true,
+            allowTaint: true
+          });
+          fallbackDownload(retryCanvas, filename.replace('.jpg', '.png'));
+        } catch (retryError) {
+          console.error('재시도 캡처 실패:', retryError);
+          setSaveToast({ show: true, message: '이미지 저장에 실패했습니다.' });
+          if (saveToastTimerRef.current) {
+            clearTimeout(saveToastTimerRef.current);
+          }
+          saveToastTimerRef.current = setTimeout(() => {
+            setSaveToast({ show: false, message: '' });
+            saveToastTimerRef.current = undefined;
+          }, 2500);
+        }
       }
+      
     } catch (error) {
-      setSaveToast({ show: true, message: '이미지 저장에 실패했습니다.' });
-      if (saveToastTimerRef.current) {
-        clearTimeout(saveToastTimerRef.current);
-      }
-      saveToastTimerRef.current = setTimeout(() => {
-        setSaveToast({ show: false, message: '' });
-        saveToastTimerRef.current = undefined;
-      }, 2500);
+      console.error('Failed to save image:', error);
+        setSaveToast({ show: true, message: '이미지 저장에 실패했습니다.' });
+        if (saveToastTimerRef.current) {
+          clearTimeout(saveToastTimerRef.current);
+        }
+        saveToastTimerRef.current = setTimeout(() => {
+          setSaveToast({ show: false, message: '' });
+          saveToastTimerRef.current = undefined;
+        }, 2500);
     }
   };
 

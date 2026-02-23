@@ -11,6 +11,20 @@ body, #root {
   color: #fff;
   font-family: 'Pretendard', 'system-ui', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif;
 }
+html, body, .mode-select-screen {
+  overflow-x: hidden;
+  min-width: 320px;
+}
+body, #root {
+  width: 100vw;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(180deg, #232323 70%, #181818 100%);
+  color: #fff;
+  font-family: 'Pretendard', 'system-ui', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif;
+  box-sizing: border-box;
+}
 
 /* WelcomeScreen Styles */
 .welcome-screen {
@@ -103,4 +117,103 @@ body, #root {
 }
 .welcome-button:active {
   background: #1976d2;
+}
+.welcome-screen {
+  min-height: 100vh;
+  width: 100vw;
+  background: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0;
+  box-sizing: border-box;
+}
+.welcome-title-bar {
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(16px, 5vw, 36px);
+  margin-bottom: clamp(12px, 3vw, 24px);
+}
+.welcome-title-bg {
+  border-radius: 8px;
+  padding: clamp(8px, 2vw, 14px) 0;
+  min-width: 90vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.welcome-title-text {
+  font-family: 'Pretendard', 'system-ui', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif;
+  font-weight: 900;
+  color: #fff;
+  font-size: clamp(1.1rem, 4vw, 1.8rem);
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+  text-shadow: 0 2px 8px #000a;
+}
+.welcome-content {
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1 1 auto;
+}
+.welcome-ball-area {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  width: 100vw;
+  margin-bottom: clamp(-10px, -2vw, -20px);
+  margin-top: clamp(10px, 5vw, 30px);
+  z-index: 2;
+}
+.cannon-body-area {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100vw;
+  margin-top: clamp(20px, 8vw, 60px);
+  margin-bottom: clamp(-10px, -2vw, -20px);
+  z-index: 1;
+}
+.welcome-bottom {
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  margin-top: auto;
+  background: rgba(30,30,30,0.92);
+  padding: 0 0 clamp(12px, 4vw, 25px) 0;
+  box-sizing: border-box;
+}
+.welcome-button {
+  width: min(92vw, 370px);
+  border-radius: 18px;
+  padding: clamp(10px, 4vw, 18px) 0 clamp(8px, 3vw, 16px) 0;
+  font-size: clamp(1rem, 4vw, 1.4rem);
+  font-weight: 700;
+  background: #3390ff;
+  color: #fff;
+  border: none;
+  box-shadow: 0 2px 16px #0006;
+  margin: 0 auto;
+  display: block;
+  cursor: pointer;
+  transition: background 0.2s;
+  letter-spacing: 0.01em;
+}
+.welcome-button:active {
+  background: #1976d2;
+}
+@media (max-width: 600px) {
+  .welcome-title-text {
+    font-size: clamp(1rem, 6vw, 1.4rem);
+  }
+  .welcome-button {
+    font-size: clamp(0.9rem, 5vw, 1.1rem);
+    padding: clamp(8px, 3vw, 12px) 0 clamp(6px, 2vw, 10px) 0;
+  }
 }

@@ -226,13 +226,7 @@ function ResultScreen() {
         return;
       }
 
-      // 검은색 영역 전체(결과+텍스트+버튼) 캡처: .result-screen의 부모 div를 타겟팅
-      const resultScreen = document.querySelector('.result-screen');
-      if (!resultScreen) {
-        setSaveToast({ show: true, message: '캡처 대상을 찾을 수 없습니다.' });
-        return;
-      }
-      const blackArea = resultScreen.parentElement;
+      const blackArea = document.querySelector('.firing-red-ball-anim');
       if (!blackArea || !(blackArea instanceof HTMLElement)) {
         setSaveToast({ show: true, message: '캡처 영역을 찾을 수 없습니다.' });
         return;

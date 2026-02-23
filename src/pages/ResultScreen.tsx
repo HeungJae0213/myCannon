@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import '../assets/ResultScreen.css';
 import WelcomeBall from '../components/WelcomeBall';
+import { loadFullScreenAd, showFullScreenAd } from '@apps-in-toss/web-framework';
 
 // 중복 없는 랜덤 번호 추출 함수 (이미 뽑힌 번호 제외)
 function getUniqueRandom(min: number, max: number, used: Set<number>): number | null {
@@ -29,9 +30,9 @@ function ResultScreen() {
   // 남은 공 개수 0일 때 페이지 이동은 handleFire에서만 처리
   const [fireCount, setFireCount] = useState(0);
   const [showAdModal, setShowAdModal] = useState(false);
-  const [adLoading, setAdLoading] = useState(false);
-  const [adRetryCount, setAdRetryCount] = useState(0);
-  const [showLoadingModal, setShowLoadingModal] = useState(false);
+  const [adLoading, ] = useState(false);
+  const [adRetryCount, ] = useState(0);
+  const [showLoadingModal, ] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [firing, setFiring] = useState(false);
   const [fireCooldown, setFireCooldown] = useState(false);
@@ -46,14 +47,65 @@ function ResultScreen() {
   const [, setShowConfetti] = useState(false);
   // 광고 ID는 .env에서 가져옴
   const interstitialAdId = import.meta.env.VITE_INTERSTITIAL_AD_ID;
+  const adGroupId = import.meta.env.VITE_REWARDED_AD_ID || '';
+  const [isAdLoaded, setIsAdLoaded] = useState(false);
+  const adUnregisterRef = useRef<null | (() => void)>(null);
 
-  // 광고 로딩 관련 정리: 광고는 '광고 보기' 버튼 클릭 시에만 loadAppsInTossAdMob 호출
+  // 광고는 컴포넌트 마운트 시 미리 로드
   useEffect(() => {
-    return () => {
-      if (toastTimeout.current) clearTimeout(toastTimeout.current);
-      if (animationRef.current) cancelAnimationFrame(animationRef.current);
+    if (!loadFullScreenAd?.isSupported?.() || !adGroupId) return;
+    let retryCount = 0;
+    const maxRetry = 3;
+    const tryLoadAd = () => {
+      // 0,1회는 보상형, 2회는 전면형 광고 그룹 ID 사용
+      const groupId = retryCount < 2 ? adGroupId : interstitialAdId;
+      adUnregisterRef.current = loadFullScreenAd({
+        options: { adGroupId: groupId },
+        onEvent: (event) => {
+          if (event.type === 'loaded') setIsAdLoaded(true);
+        },
+        onError: () => {
+          setIsAdLoaded(false);
+          retryCount++;
+          if (retryCount < maxRetry) {
+            setTimeout(tryLoadAd, 800); // 0.8초 후 재시도
+          }
+        },
+      });
     };
-  }, []);
+    tryLoadAd();
+    return () => {
+      if (adUnregisterRef.current) adUnregisterRef.current();
+    };
+  }, [adGroupId, interstitialAdId]);
+
+  // 광고 보기 버튼 클릭 시 이미 로드된 광고 노출
+  const handleShowAd = () => {
+    if (!isAdLoaded || !showFullScreenAd?.isSupported?.()) return;
+    showFullScreenAd({
+      options: { adGroupId },
+      onEvent: (event) => {
+        if (event.type === 'userEarnedReward') {
+          setFireCount(fireCount + 5);
+          setShowAdModal(false);
+        }
+        if (event.type === 'dismissed' || event.type === 'failedToShow') {
+          setIsAdLoaded(false);
+          // 광고 닫힘/실패 시 다음 광고 미리 로드
+          adUnregisterRef.current = loadFullScreenAd({
+            options: { adGroupId },
+            onEvent: (e) => {
+              if (e.type === 'loaded') setIsAdLoaded(true);
+            },
+            onError: () => setIsAdLoaded(false),
+          });
+        }
+      },
+      onError: () => {
+        setIsAdLoaded(false);
+      },
+    });
+  };
 
   // 발사 애니메이션
   const animateFire = () => {
@@ -146,84 +198,6 @@ function ResultScreen() {
     setCurrentNumber(num);
     setFireCount(fireCount - 1);
     animateFire();
-  };
-
-  // 광고 로딩/시청 재시도 로직
-  const tryShowAd = async (retry = 0) => {
-    setShowLoadingModal(true);
-    setAdLoading(true);
-    let tried = retry;
-    const tryRewarded = (cb: (success: boolean) => void) => {
-      if (window.loadAppsInTossAdMob && interstitialAdId) {
-        window.loadAppsInTossAdMob({
-          adUnitId: interstitialAdId,
-          adType: 'rewarded',
-          testMode: true,
-          onClose: (result: { completed: boolean }) => {
-            cb(result.completed);
-          }
-        });
-      } else {
-        setTimeout(() => cb(false), 1200);
-      }
-    };
-    const tryInterstitial = (cb: (success: boolean) => void) => {
-      if (window.loadAppsInTossAdMob && interstitialAdId) {
-        window.loadAppsInTossAdMob({
-          adUnitId: interstitialAdId,
-          adType: 'interstitial',
-          testMode: true,
-          onClose: (result: { completed: boolean }) => {
-            cb(result.completed);
-          }
-        });
-      } else {
-        setTimeout(() => cb(false), 1200);
-      }
-    };
-    // 2회는 rewarded, 마지막 1회는 interstitial
-    const doRetry = () => {
-      if (tried < 2) {
-        tryRewarded(success => {
-          if (success) {
-            setFireCount(fireCount + 5);
-            setShowAdModal(false);
-            setShowLoadingModal(false);
-            setAdLoading(false);
-            setAdRetryCount(0);
-          } else {
-            tried++;
-            setAdRetryCount(tried);
-            doRetry();
-          }
-        });
-      } else if (tried === 2) {
-        tryInterstitial(success => {
-          if (success) {
-            setFireCount(fireCount + 5);
-            setShowAdModal(false);
-            setShowLoadingModal(false);
-            setAdLoading(false);
-            setAdRetryCount(0);
-          } else {
-            // 실패 UX
-            setShowLoadingModal(false);
-            setAdLoading(false);
-            setShowAdModal(false);
-            setAdRetryCount(0);
-            setShowToast(true);
-            toastTimeout.current = setTimeout(() => setShowToast(false), 2600);
-            setTimeout(() => {
-              setFireCount(fireCount + 1);
-              setResultVisible(false);
-              setFiring(false);
-              setShowNumber(false);
-            }, 800); // fallback 1회 지급 및 상태 초기화
-          }
-        });
-      }
-    };
-    doRetry();
   };
 
   const [resultVisible, setResultVisible] = useState(false);
@@ -395,13 +369,8 @@ function ResultScreen() {
               </button>
               <button
                 className="ad-modal-btn ad-modal-btn-blue"
-                onClick={() => {
-                  tryShowAd(0);
-                  setResultVisible(false);
-                  setFiring(false);
-                  setShowNumber(false);
-                }}
-                disabled={adLoading}
+                onClick={handleShowAd}
+                disabled={!isAdLoaded || adLoading}
               >
                 광고 보기
               </button>

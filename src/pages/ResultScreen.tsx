@@ -202,35 +202,163 @@ function ResultScreen() {
 
   const [resultVisible, setResultVisible] = useState(false);
 
+  // 갤러리 저장 (Apps in Toss 공식 API 사용)
+  // 메모리 최적화: 타이머 참조를 ref로 관리하여 정리 가능하도록 수정
+  const saveToastTimerRef = useRef<number | undefined>(undefined);
+
+  // 저장 토스트 상태
+  const [saveToast, setSaveToast] = useState<{ show: boolean; message: string }>({ show: false, message: '' });
+
   // 저장하기 버튼 클릭 시 갤러리 저장 (캡처)
   const handleSave = async () => {
-    // 실제로는 캡처된 base64 PNG 데이터가 필요합니다.
-    // 아래는 예시용 더미 데이터 (실제 환경에서는 캡처/렌더링된 base64 PNG를 사용해야 함)
-    const dummyBase64 = 'iVBORw0KGgoAAAANSUhEUgAAAAUA...';
     try {
-      if (typeof window.saveBase64Data === 'function') {
-        await window.saveBase64Data({
-          base64Data: dummyBase64,
-          fileName: 'cannonball-result.png',
-          mimeType: 'image/png',
-          onSuccess: () => {
-            alert('갤러리에 저장되었습니다!');
-          },
-          onError: () => {
-            alert('저장에 실패했습니다.');
-          }
-        });
-      } else {
-        alert('저장 기능은 Toss 앱에서만 지원됩니다.');
+      // 결과가 표시 중일 때만 저장 (resultVisible && showNumber)
+      if (!(resultVisible && showNumber)) {
+        // 기존 타이머 정리
+        if (saveToastTimerRef.current) {
+          clearTimeout(saveToastTimerRef.current);
+        }
+        setSaveToast({ show: true, message: '먼저 공을 뽑아주세요!' });
+        saveToastTimerRef.current = setTimeout(() => {
+          setSaveToast({ show: false, message: '' });
+          saveToastTimerRef.current = undefined;
+        }, 2500);
+        return;
+      }
+
+      // 검은색 영역 전체(결과+텍스트+버튼) 캡처: .result-screen의 부모 div를 타겟팅
+      const resultScreen = document.querySelector('.result-screen');
+      if (!resultScreen) {
+        setSaveToast({ show: true, message: '캡처 대상을 찾을 수 없습니다.' });
+        return;
+      }
+      const blackArea = resultScreen.parentElement;
+      if (!blackArea || !(blackArea instanceof HTMLElement)) {
+        setSaveToast({ show: true, message: '캡처 영역을 찾을 수 없습니다.' });
+        return;
+      }
+      // DOM 업데이트 대기
+      await new Promise(resolve => setTimeout(resolve, 50));
+      let html2canvas: (el: HTMLElement, options?: object) => Promise<HTMLCanvasElement>;
+      try {
+        html2canvas = (await import('html2canvas')).default;
+      } catch (e) {
+        setSaveToast({ show: true, message: 'html2canvas 라이브러리가 필요합니다.' });
+        return;
+      }
+      const canvas = await html2canvas(blackArea, {
+        backgroundColor: null,
+        scale: 1.5,
+        logging: false,
+        useCORS: true,
+        allowTaint: true,
+        removeContainer: true,
+        onclone: (clonedDoc: Document) => {
+          // 필요시 스타일 최적화
+        }
+      });
+
+      // Canvas를 Base64로 변환 (JPEG로 압축하여 메모리 및 파일 크기 감소)
+      const base64Data = canvas.toDataURL('image/jpeg', 0.9).split(',')[1];
+      const timestamp = new Date().getTime();
+      const filename = `cannonball_result_${timestamp}.jpg`;
+
+      // Canvas 메모리 정리
+      canvas.width = 0;
+      canvas.height = 0;
+
+      // Apps in Toss saveBase64Data API 사용
+      try {
+        if (typeof (window as unknown as { saveBase64Data?: (args: { base64Data: string; fileName: string; mimeType: string; onSuccess: () => void; onError: () => void }) => void }).saveBase64Data === 'function') {
+          await (window as unknown as { saveBase64Data: (args: { base64Data: string; fileName: string; mimeType: string; onSuccess: () => void; onError: () => void }) => void }).saveBase64Data({
+            base64Data,
+            fileName: filename,
+            mimeType: 'image/jpeg',
+            onSuccess: () => {
+              setSaveToast({ show: true, message: '📷 갤러리에 저장했습니다!' });
+              if (saveToastTimerRef.current) clearTimeout(saveToastTimerRef.current);
+              saveToastTimerRef.current = setTimeout(() => {
+                setSaveToast({ show: false, message: '' });
+                saveToastTimerRef.current = undefined;
+              }, 2500);
+            },
+            onError: () => {
+              setSaveToast({ show: true, message: '저장에 실패했습니다.' });
+              if (saveToastTimerRef.current) clearTimeout(saveToastTimerRef.current);
+              saveToastTimerRef.current = setTimeout(() => {
+                setSaveToast({ show: false, message: '' });
+                saveToastTimerRef.current = undefined;
+              }, 2500);
+            }
+          });
+        } else {
+          // 샌드박스/로컬 등 미지원 환경에서는 브라우저 다운로드로 대체
+          fallbackDownload(canvas, filename.replace('.jpg', '.png'));
+        }
+      } catch (saveError) {
+        // 실패 시 브라우저 다운로드로 대체
+        fallbackDownload(canvas, filename.replace('.jpg', '.png'));
       }
     } catch (error) {
-      alert('저장에 실패했습니다.');
-      // console.error('데이터 저장에 실패했어요:', error);
+      setSaveToast({ show: true, message: '이미지 저장에 실패했습니다.' });
+      if (saveToastTimerRef.current) {
+        clearTimeout(saveToastTimerRef.current);
+      }
+      saveToastTimerRef.current = setTimeout(() => {
+        setSaveToast({ show: false, message: '' });
+        saveToastTimerRef.current = undefined;
+      }, 2500);
     }
+  };
+
+  // 브라우저 다운로드 (대체 방법)
+  // 메모리 최적화: Canvas 정리 및 타이머 관리 추가
+  const fallbackDownload = (canvas: HTMLCanvasElement, filename: string) => {
+    canvas.toBlob((blob) => {
+      canvas.width = 0;
+      canvas.height = 0;
+      if (!blob) {
+        setSaveToast({ show: true, message: '이미지 생성에 실패했습니다.' });
+        if (saveToastTimerRef.current) {
+          clearTimeout(saveToastTimerRef.current);
+        }
+        saveToastTimerRef.current = setTimeout(() => {
+          setSaveToast({ show: false, message: '' });
+          saveToastTimerRef.current = undefined;
+        }, 2500);
+        return;
+      }
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.download = filename;
+      link.href = url;
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      setTimeout(() => {
+        link.click();
+        setTimeout(() => {
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+        }, 100);
+      }, 0);
+      setSaveToast({ show: true, message: '💾 다운로드 폴더를 확인해주세요!' });
+      if (saveToastTimerRef.current) {
+        clearTimeout(saveToastTimerRef.current);
+      }
+      saveToastTimerRef.current = setTimeout(() => {
+        setSaveToast({ show: false, message: '' });
+        saveToastTimerRef.current = undefined;
+      }, 2500);
+    }, 'image/png');
   };
 
   return (
     <div>
+      {saveToast.show && (
+        <div style={{ position: 'fixed', top: 80, left: '50%', transform: 'translateX(-50%)', background: '#222', color: '#fff', fontSize: '1.1rem', fontWeight: 600, padding: '16px 32px', borderRadius: 16, zIndex: 2000, boxShadow: '0 2px 8px #0004' }}>
+          {saveToast.message}
+        </div>
+      )}
       {showNoBallsMsg && (
         <div style={{ position: 'fixed', top: '30%', left: '50%', transform: 'translateX(-50%)', background: '#222', color: '#fff', fontSize: '1.2rem', fontWeight: 'bold', padding: '24px 32px', borderRadius: '18px', zIndex: 999 }}>
           쏠 수 있는 공이 없어요<br />처음 페이지로 돌아가요

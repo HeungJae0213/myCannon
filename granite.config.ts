@@ -5,7 +5,7 @@ export default defineConfig({
   brand: {
     displayName: '대포뽑기', 
     primaryColor: '#3182F6', 
-    icon: process.env.VITE_CANNON_ICON || "/public/myCannon.png", 
+    icon: process.env.VITE_CANNON_ICON || 'https://static.toss.im/appsintoss/3897/d3835105-aa16-4500-983a-8dd149dfbb91.png',
   },
   web: {
     host: process.env.VITE_DEV_HOST || 'localhost',
@@ -17,5 +17,8 @@ export default defineConfig({
   },
   permissions: [],
   outdir: 'dist',
+  webViewProps: {
+    type: 'partner',
+  },
 });
 

@@ -96,8 +96,14 @@ body, #root {
   justify-content: center;
   margin-top: auto;
   background: rgba(30,30,30,0.92);
-  padding: 0 0 clamp(12px, 4vw, 25px) 0;
+  padding-bottom: max(env(safe-area-inset-bottom, 0), clamp(12px, 4vw, 25px));
+  padding-top: 0;
+  padding-left: 0;
+  padding-right: 0;
   box-sizing: border-box;
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
 }
 .welcome-button {
   width: 92vw;
@@ -187,7 +193,7 @@ body, #root {
   display: flex;
   justify-content: center;
   margin-top: clamp(24px, 6vw, 48px);      /* 버튼 위 간격 */
-  padding: 0 0 clamp(120px, 6vw, 240px) 0;  /* 버튼 아래 간격 */
+  padding: 0 0 clamp(20px, 2vw, 40px) 0;  /* 버튼 아래 간격 */
   background: rgba(30,30,30,0.92);
   box-sizing: border-box;
 }

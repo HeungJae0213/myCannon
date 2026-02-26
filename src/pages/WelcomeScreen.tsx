@@ -1,6 +1,5 @@
 // 앱 첫 화면(웰컴/시작 화면)
 import { useState } from 'react';
-import NavBar from '../components/NavBar';
 import { useNavigate } from 'react-router-dom';
 import WelcomeBall from '../components/WelcomeBall';
 import CannonBody from '../components/CannonBody';
@@ -18,7 +17,6 @@ function WelcomeScreen() {
 
   return (
     <>
-      <NavBar />
       <div className={`welcome-screen${fadeOut ? ' fade-out' : ''}`}>
       <div className="welcome-title-bar">
         <div className="welcome-title-bg">
